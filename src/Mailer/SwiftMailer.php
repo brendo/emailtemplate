@@ -4,10 +4,12 @@ namespace EmailTemplate\Mailer;
 
 use EmailTemplate\Interfaces\MailerInterface;
 use EmailTemplate\Interfaces\MessageInterface;
+use EmailTemplate\Interfaces\AttachmentInterface;
 use Psr\Log\LoggerAwareTrait;
 use Swift_SmtpTransport;
 use Swift_Mailer;
 use Swift_Message;
+use Swift_Attachment;
 
 class SwiftMailer implements MailerInterface
 {
@@ -15,7 +17,6 @@ class SwiftMailer implements MailerInterface
 
     /**
      * The settings for the mail service
-     *
      * @var array
      */
     private $settings;
@@ -130,6 +131,51 @@ class SwiftMailer implements MailerInterface
             $bodyCount++;
         }
 
+        // Handle attachments
+        if (!empty($message->attachment())) {
+            foreach ($message->attachment() as $attachment) {
+                $this->createSwiftAttachment($swiftMessage, $attachment);
+            }
+        }
+
         return $swiftMessage;
+    }
+
+    /**
+     * Given an array of attachments, add them to the Swift_Message instance
+     * so they will be included on the email.
+     *
+     * @param Swift_Message $swiftMessage
+     * @param AttachmentInterface $attachment
+     * @return Swift_Message
+     */
+    private function createSwiftAttachment(Swift_Message $swiftMessage, AttachmentInterface $attachment)
+    {
+        // Is the attachment an actual path or the raw content?
+        if ($attachment->isPath()) {
+            $swiftAttachment = Swift_Attachment::fromPath($attachment->data());
+
+        // Handle raw content
+        } else {
+            $swiftAttachment = Swift_Attachment::newInstance();
+            $swiftAttachment->setBody($attachment->data());
+        }
+
+        // Set the filename
+        if (!is_null($attachment->filename())) {
+            $swiftAttachment->setFilename($attachment->filename());
+        }
+
+        // Set the content type
+        if (!is_null($attachment->contentType())) {
+            $swiftAttachment->setContentType($attachment->contentType());
+        }
+
+        // Set the disposition
+        if (!is_null($attachment->disposition())) {
+            $swiftAttachment->setDisposition($attachment->disposition());
+        }
+
+        $swiftMessage->attach($swiftAttachment);
     }
 }

@@ -14,13 +14,13 @@ class EmailTemplate extends Email implements Interfaces\TemplateInterface
 
     /**
      * Holds the current email template, unparsed
-     *
      * @var string
      */
     private $template;
 
     /**
      * Holds the parsed email template, ready for sending
+     * @var string
      */
     private $parsedTemplate;
 

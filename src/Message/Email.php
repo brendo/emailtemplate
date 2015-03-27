@@ -8,45 +8,45 @@ class Email implements Interfaces\MessageInterface
 {
     /**
      * The recipient
-     *
-     * @param array
+     * @var array
      */
     private $to;
 
     /**
      * The cc
-     *
-     * @param array
+     * @var array
      */
     private $cc;
 
     /**
      * The bcc
-     *
-     * @param array
+     * @var array
      */
     private $bcc;
 
     /**
      * The sender
-     *
-     * @param array
+     * @var array
      */
     private $from;
 
     /**
      * The subject
-     *
-     * @param string
+     * @var string
      */
     private $subject;
 
     /**
-     * The body of the email
-     *
-     * @param string
+     * The body of the message
+     * @var string
      */
     private $body;
+
+    /**
+     * Any attachements for this message
+     * @var array
+     */
+    private $attachments = [];
 
     /**
      * {@inheritdoc}
@@ -120,5 +120,17 @@ class Email implements Interfaces\MessageInterface
         }
 
         return $this->body;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function attachment(Interfaces\AttachmentInterface $attachment = null)
+    {
+        if (isset($attachment)) {
+            $this->attachments[$attachment->filename()] = $attachment;
+        }
+
+        return $this->attachments;
     }
 }

@@ -63,4 +63,13 @@ interface MessageInterface
      *  With the key being the content type the value the body string
      */
     public function body($value = null, $contentType = 'text/plain');
+
+    /**
+     * Adds an `$attachment` to this message if provided, otherwise
+     * returns all attachments on this message.
+     *
+     * @param AttachmentInterface $attachment
+     * @return array
+     */
+    public function attachment(AttachmentInterface $attachment = null);
 }

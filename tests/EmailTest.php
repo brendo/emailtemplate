@@ -1,6 +1,7 @@
 <?php
 
 use EmailTemplate\Message as Components;
+use EmailTemplate\Attachment\Attachment;
 use EmailTemplate\Interfaces as Interfaces;
 
 class EmailTest extends PHPUnit_Framework_TestCase
@@ -49,26 +50,44 @@ class EmailTest extends PHPUnit_Framework_TestCase
 
     public function testBody()
     {
-        $this->assertNull($this->email->body());
-        $this->email->body('Hello there mate');
-        $this->assertEquals(['text/plain' => 'Hello there mate'], $this->email->body());
+        $email = new Components\Email;
+        $this->assertNull($email->body());
+        $email->body('Hello there mate');
+        $this->assertEquals(['text/plain' => 'Hello there mate'], $email->body());
     }
 
+    /**
+     * @depends testBody
+     */
     public function testRichBody()
     {
-        $this->assertNull($this->email->body());
-        $this->email->body('<strong>Hello there mate</strong>', 'text/html');
-        $this->assertEquals(['text/html' => '<strong>Hello there mate</strong>'], $this->email->body());
+        $email = new Components\Email;
+        $email->body('<strong>Hello there mate</strong>', 'text/html');
+        $this->assertEquals(['text/html' => '<strong>Hello there mate</strong>'], $email->body());
     }
 
+    /**
+     * @depends testBody
+     */
     public function testMulitipleBodies()
     {
-        $this->assertNull($this->email->body());
-        $this->email->body('<strong>Hello there mate</strong>', 'text/html');
-        $this->email->body('Hello there mate');
+        $email = new Components\Email;
+        $email->body('<strong>Hello there mate</strong>', 'text/html');
+        $email->body('Hello there mate');
         $this->assertEquals([
             'text/html' => '<strong>Hello there mate</strong>',
             'text/plain' => 'Hello there mate'
-        ], $this->email->body());
+        ], $email->body());
+    }
+
+    public function testAttachment()
+    {
+        $attachment = new Attachment;
+        $attachment->filename('helloworld.txt');
+        $attachment->data(__DIR__ . '/fixtures/hello.txt', true);
+
+        $this->assertEmpty($this->email->attachment());
+        $this->email->attachment($attachment);
+        $this->assertEquals(['helloworld.txt' => $attachment], $this->email->attachment());
     }
 }
