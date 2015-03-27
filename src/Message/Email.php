@@ -52,7 +52,25 @@ class Email implements Interfaces\MessageInterface
      * The Content Type of this email
      * @var string
      */
-    public $contentType = 'text/plain';
+    protected $contentType = 'text/plain';
+
+    /**
+     * Adds the ability to override the default content type
+     * of `text/plain` with another, or to return the current
+     * content type if passed with no parameters.
+     *
+     * @since 0.2.0
+     * @param string $contentType
+     * @return string
+     */
+    public function contentType($contentType = null)
+    {
+        if (isset($contentType)) {
+            $this->contentType = $contentType;
+        }
+
+        return $this->contentType;
+    }
 
     /**
      * {@inheritdoc}

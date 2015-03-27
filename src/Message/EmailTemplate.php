@@ -28,7 +28,7 @@ class EmailTemplate extends Email implements Interfaces\TemplateInterface
      * The Content Type of this email
      * @var string
      */
-    public $contentType = 'text/html';
+    protected $contentType = 'text/html';
 
     /**
      * Constructor optionally accepts `$templatePath`, which is the

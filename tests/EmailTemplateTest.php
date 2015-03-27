@@ -8,13 +8,14 @@ class EmailTemplateTest extends PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
-        $this->path = __DIR__ . '/templates';
+        $this->path = __DIR__ . '/fixtures';
         $this->emailTemplate = new Message\EmailTemplate($this->path);
     }
 
     public function testConstructor()
     {
         $this->assertEquals($this->path, $this->emailTemplate->getTemplatePath());
+        $this->assertEquals('text/html', $this->emailTemplate->contentType());
     }
 
     public function testDefaultTemplatePath()

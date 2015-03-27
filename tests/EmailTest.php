@@ -10,6 +10,13 @@ class EmailTest extends PHPUnit_Framework_TestCase
         $this->email = new Components\Email;
     }
 
+    public function testContentType()
+    {
+        $this->assertEquals('text/plain', $this->email->contentType());
+        $this->email->contentType('text/html');
+        $this->assertEquals('text/html', $this->email->contentType());
+    }
+
     public function testTo()
     {
         $this->assertNull($this->email->to());
