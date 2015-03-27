@@ -1,13 +1,15 @@
-# Email Template v0.1.0
+# Email Template v0.2.0
 
 This component facilitates for the sending of emails using Swiftmailer.
 
 ## Usage
 This library is made up of a few key concepts. A `Message`, `Prepare` and `Mailer`. All three
-are required to construct the email, prepare the body and send the email.
+are required to construct the email, prepare the body and send the email. Optionally, you may
+also choose to add `Attachment` to your `Message`.
 
+---
 
-### `Message`
+### Message
 Constructs the bare bones of an email, such as who it's going to, the subject line etc.
 
 #### `Email`
@@ -38,7 +40,6 @@ is `text/html`.
     $emailTemplate->from('system@example.com');
     $emailTemplate->subject('Hello there');
 
-
 ##### Mesages with Fallback
 You can specify both plain text and HTML alternatives to an email by specifiying a content type
 when setting the body of the email:
@@ -49,7 +50,40 @@ when setting the body of the email:
 If the content type is omitted, the default content type will be used (`text/plain` for `Email` and
 `text/html` for `EmailTemplate`)
 
-### `Prepare`
+---
+
+### Attachment
+All `Message` classes are able to support attachments via their `attachment` method. An attachment
+can be either the path to the file, or the actual contents of the file itself. Multiple attachments
+can be added with subsequent calls to the `attachment` method.
+
+This example is a path to the attachment:
+
+    // Create the attachment
+    $attachment = new EmailTemplate\Attachment\Attachment;
+    $attachment->filename('hello.txt');
+    $attachment->data('/path/to/your/file', true);
+
+    // Now attach it!
+    $email->attachment($attachment);
+
+This example is an inline attachment, an image called `waves.png`. Note the `disposition()` method
+that will attempt to inline the image instead of just attaching it to the message.
+
+    // Create the attachment
+    $attachment = new EmailTemplate\Attachment\Attachment;
+    $attachment->filename('waves.png');
+    $attachment->data({wavesbinarydatahere});
+    $attachment->contentType('image/png');
+    $attachment->disposition('inline');
+
+    // Now attach it!
+    $email->attachment($attachment);
+
+
+---
+
+### Prepare
 This is what generates the actual body of an email template. It should be used in conjuction with
 `Message\EmailTemplate`.
 
@@ -86,7 +120,9 @@ Assuming `$emailTemplate` from the above example:
     $emailTemplate->setParsedTemplate($parsed);
 
 
-### `Mailer`
+---
+
+### Mailer
 This is how the emails will actually be sent.
 
 #### `SwiftMailer`
