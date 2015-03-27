@@ -3,7 +3,7 @@
     "description": "Allows for sending of emails using Swift Mailer. Supports Email's and Email Template's",
     "require": {
         "swiftmailer/swiftmailer": "5.3.*",
-        "monolog/monolog": "~1.0",
+        "psr/log": "~1.0",
         "mustache/mustache": "~2.7"
     },
     "require-dev": {

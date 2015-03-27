@@ -2,24 +2,23 @@
 
 namespace EmailTemplate\Mailer;
 
-use Monolog\Logger as Logger;
-use EmailTemplate\Interfaces as Interfaces;
+use EmailTemplate\Interfaces\MailerInterface;
+use EmailTemplate\Interfaces\MessageInterface;
+use Psr\Log\LoggerAwareTrait;
+use Swift_SmtpTransport;
+use Swift_Mailer;
+use Swift_Message;
 
-class SwiftMailer implements Interfaces\MailerInterface
+class SwiftMailer implements MailerInterface
 {
+    use LoggerAwareTrait;
+
     /**
      * The settings for the mail service
      *
      * @var array
      */
     private $settings;
-
-    /**
-     * Is there any logging to take place?
-     * @var Logger
-     */
-    private $logger;
-
 
     /**
      * Holds the actual Swift mailer instance
@@ -40,33 +39,7 @@ class SwiftMailer implements Interfaces\MailerInterface
     /**
      * {@inheritdoc}
      */
-    public function setLogger(Logger $logger)
-    {
-        $this->logger = $logger;
-
-        return true;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function canLog()
-    {
-        return isset($this->logger);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getLogger()
-    {
-        return $this->logger;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function send(Interfaces\MessageInterface $message)
+    public function send(MessageInterface $message)
     {
         $swiftMessage = $this->createSwiftMessage($message);
 
@@ -74,19 +47,19 @@ class SwiftMailer implements Interfaces\MailerInterface
 
         $result = $mailer->send($swiftMessage, $failures);
 
-        if ($this->canLog()) {
+        if ($this->logger) {
             if ($result === 0) {
-                $this->logger->addError('Mail failed to send.', array(
+                $this->logger->error('Mail failed to send.', [
                     'message' => $message,
                     'successfullySent' => $result,
                     'failedSent' => $failures
-                ));
+                ]);
             } else {
-                $this->logger->addInfo('Mail was sent.', array(
+                $this->logger->info('Mail was sent.', [
                     'message' => $message,
                     'successfullySent' => $result,
                     'failedSent' => $failures
-                ));
+                ]);
             }
         }
 
@@ -107,14 +80,14 @@ class SwiftMailer implements Interfaces\MailerInterface
         }
 
         if (!isset(self::$mailer)) {
-            $transport = \Swift_SmtpTransport::newInstance()
+            $transport = Swift_SmtpTransport::newInstance()
                 ->setHost($this->settings['host'])
                 ->setPort($this->settings['port'])
                 ->setEncryption('ssl')
                 ->setUsername($this->settings['username'])
                 ->setPassword($this->settings['password']);
 
-            self::$mailer = \Swift_Mailer::newInstance($transport);
+            self::$mailer = Swift_Mailer::newInstance($transport);
         }
 
         return self::$mailer;
@@ -124,16 +97,16 @@ class SwiftMailer implements Interfaces\MailerInterface
      * Given a message, this function has the job of converting it to
      * a `Swift_Message` instance.
      *
-     * @param Interfaces\MessageInterface $message
+     * @param MessageInterface $message
      * @return Swift_Message
      */
-    private function createSwiftMessage($message)
+    private function createSwiftMessage(MessageInterface $message)
     {
-        $swiftMessage = \Swift_Message::newInstance()
+        $swiftMessage = Swift_Message::newInstance()
             ->setSubject($message->subject())
             ->setFrom($message->from())
             ->setTo($message->to())
-            ->setBody($message->body(), $message->contentType);
+            ->setBody($message->body(), $message->contentType());
 
         if (!is_null($message->cc())) {
             $swiftMessage->setCc($message->cc());

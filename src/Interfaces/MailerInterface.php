@@ -2,9 +2,9 @@
 
 namespace EmailTemplate\Interfaces;
 
-use Monolog\Logger as Logger;
+use Psr\Log\LoggerAwareInterface;
 
-interface MailerInterface
+interface MailerInterface extends LoggerAwareInterface
 {
     /**
      * Accepts an array of configuration settings for the email client
@@ -13,28 +13,6 @@ interface MailerInterface
      * @return boolean
      */
     public function setConfiguration(array $settings);
-
-    /**
-     * Enables logging of anything that occurs inside this class
-     *
-     * @param Monolog\Logger $logger
-     * @return boolean
-     */
-    public function setLogger(Logger $logger);
-
-    /**
-     * Returns the current Log handler
-     *
-     * @return Monolog\Logger
-     */
-    public function getLogger();
-
-    /**
-     * Can this Mailer do logging?
-     *
-     * @return boolean
-     */
-    public function canLog();
 
     /**
      * This function will actually send the email to the given recipients.

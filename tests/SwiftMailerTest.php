@@ -3,8 +3,6 @@
 use EmailTemplate\Message as Message;
 use EmailTemplate\Mailer as Mailer;
 use EmailTemplate\Interfaces as Interfaces;
-use Monolog\Handler as Handler;
-use Monolog\Logger;
 
 class SwiftMailerTest extends PHPUnit_Framework_TestCase
 {
@@ -28,10 +26,6 @@ class SwiftMailerTest extends PHPUnit_Framework_TestCase
             'username' => 'example@example.com',
             'password' => 'password'
         ];
-
-        // Logger
-        $this->log = new Logger('email-template-test');
-        $this->log->pushHandler(new Handler\TestHandler);
     }
 
     public function testSetConfiguration()
@@ -40,43 +34,11 @@ class SwiftMailerTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($mailer->setConfiguration($this->settings));
     }
 
-    public function testLogger()
-    {
-        $mailer = new Mailer\SwiftMailer;
-        $this->assertFalse($mailer->canLog());
-        $this->assertTrue($mailer->setLogger($this->log));
-        $this->assertTrue($mailer->canLog());
-        $this->assertInstanceOf('Monolog\Logger', $mailer->getLogger());
-    }
-
     public function testSend()
     {
         $mailer = new Mailer\SwiftMailer;
         $mailer->setConfiguration($this->settings);
-
         $this->markTestIncomplete();
-/*
-        $this->assertTrue($mailer->send($this->email));
-*/
-    }
-
-    /**
-     * @depends testSend
-     * @depends testLogger
-     */
-    public function testSendWithLogs()
-    {
-        $mailer = new Mailer\SwiftMailer;
-        $mailer->setConfiguration($this->settings);
-        $mailer->setLogger($this->log);
-
-        $this->markTestIncomplete();
-/*
-        $this->assertTrue($mailer->send($this->email));
-
-        $handler = $mailer->getLogger()->popHandler();
-        $this->assertNotEmpty($handler->getRecords());
-*/
     }
 
     /**
