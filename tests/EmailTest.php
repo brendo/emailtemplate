@@ -10,13 +10,6 @@ class EmailTest extends PHPUnit_Framework_TestCase
         $this->email = new Components\Email;
     }
 
-    public function testContentType()
-    {
-        $this->assertEquals('text/plain', $this->email->contentType());
-        $this->email->contentType('text/html');
-        $this->assertEquals('text/html', $this->email->contentType());
-    }
-
     public function testTo()
     {
         $this->assertNull($this->email->to());
@@ -58,6 +51,24 @@ class EmailTest extends PHPUnit_Framework_TestCase
     {
         $this->assertNull($this->email->body());
         $this->email->body('Hello there mate');
-        $this->assertEquals('Hello there mate', $this->email->body());
+        $this->assertEquals(['text/plain' => 'Hello there mate'], $this->email->body());
+    }
+
+    public function testRichBody()
+    {
+        $this->assertNull($this->email->body());
+        $this->email->body('<strong>Hello there mate</strong>', 'text/html');
+        $this->assertEquals(['text/html' => '<strong>Hello there mate</strong>'], $this->email->body());
+    }
+
+    public function testMulitipleBodies()
+    {
+        $this->assertNull($this->email->body());
+        $this->email->body('<strong>Hello there mate</strong>', 'text/html');
+        $this->email->body('Hello there mate');
+        $this->assertEquals([
+            'text/html' => '<strong>Hello there mate</strong>',
+            'text/plain' => 'Hello there mate'
+        ], $this->email->body());
     }
 }

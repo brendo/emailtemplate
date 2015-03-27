@@ -105,8 +105,7 @@ class SwiftMailer implements MailerInterface
         $swiftMessage = Swift_Message::newInstance()
             ->setSubject($message->subject())
             ->setFrom($message->from())
-            ->setTo($message->to())
-            ->setBody($message->body(), $message->contentType());
+            ->setTo($message->to());
 
         if (!is_null($message->cc())) {
             $swiftMessage->setCc($message->cc());
@@ -114,6 +113,21 @@ class SwiftMailer implements MailerInterface
 
         if (!is_null($message->bcc())) {
             $swiftMessage->setBcc($message->bcc());
+        }
+
+        // Handle multiple bodies so the mail client can pick the most appropriate
+        $bodyCount = 0;
+        $body = $message->body();
+        foreach ($body as $contentType => $value) {
+            // The first body is the 'main' body
+            if ($bodyCount === 0) {
+                $swiftMessage->setBody($value, $contentType);
+
+            // Any further bodies are provided as alternatives.
+            } else {
+                $swiftMessage->addPart($value, $contentType);
+            }
+            $bodyCount++;
         }
 
         return $swiftMessage;

@@ -52,11 +52,15 @@ interface MessageInterface
     public function subject($value = null);
 
     /**
-     * Sets the 'subject' if `$value` is provided, otherwise
-     * returns the current 'subject'
+     * Sets the 'body' if `$value` is provided, otherwise
+     * returns the current 'body'. Optionally accepts a
+     * `$contentType` parameter that specifies the type of
+     * body set. This will usually be 'text/plain' or 'text/html'
      *
      * @param string $value
-     * @return string
+     * @param string $contentType
+     * @return array
+     *  With the key being the content type the value the body string
      */
-    public function body($value = null);
+    public function body($value = null, $contentType = 'text/plain');
 }

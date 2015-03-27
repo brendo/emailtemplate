@@ -6,12 +6,14 @@ This component facilitates for the sending of emails using Swiftmailer.
 This library is made up of a few key concepts. A `Message`, `Prepare` and `Mailer`. All three
 are required to construct the email, prepare the body and send the email.
 
+
 ### `Message`
 Constructs the bare bones of an email, such as who it's going to, the subject line etc.
 
 #### `Email`
 The `Email` class is the most basic of all emails, and simply allows you to create an email
-with `to`, `cc`, `bcc`, `from`, `subject` and `body` information.
+with `to`, `cc`, `bcc`, `from`, `subject` and `body` information. The default content type
+for `Email` messages is 'text/plain'.
 
     $email = new EmailTemplate\Message\Email;
     $email->to(['your-email@example.com']);
@@ -22,7 +24,8 @@ with `to`, `cc`, `bcc`, `from`, `subject` and `body` information.
 #### `EmailTemplate`
 The `EmailTemplate` class builds on the `Email` class, but instead allows you to load in
 a template with placeholders. This template is then parsed and prepared with your data to
-allow you to create dynamic emails.
+allow you to create dynamic emails. The default content type for `EmailTemplate` messages
+is `text/html`.
 
     $emailTemplate = new EmailTemplate\Message\EmailTemplate('/path/to/email-templates');
 
@@ -35,8 +38,20 @@ allow you to create dynamic emails.
     $emailTemplate->from('system@example.com');
     $emailTemplate->subject('Hello there');
 
+
+##### Mesages with Fallback
+You can specify both plain text and HTML alternatives to an email by specifiying a content type
+when setting the body of the email:
+
+    $email->body('<strong>This is HTML</strong>', 'text/html');
+    $email->body('This is text', 'text/plain');
+
+If the content type is omitted, the default content type will be used (`text/plain` for `Email` and
+`text/html` for `EmailTemplate`)
+
 ### `Prepare`
-This is what generates the actual body of an email template. It should be used in conjuction with `Message\EmailTemplate`.
+This is what generates the actual body of an email template. It should be used in conjuction with
+`Message\EmailTemplate`.
 
 #### `VsprintPrepare`
 This is a very simple handler, which accepts the template and an array of parameters to be included.
@@ -69,6 +84,7 @@ Assuming `$emailTemplate` from the above example:
 
     // Or you can inject the parsed template
     $emailTemplate->setParsedTemplate($parsed);
+
 
 ### `Mailer`
 This is how the emails will actually be sent.

@@ -16,6 +16,7 @@ class SwiftMailerTest extends PHPUnit_Framework_TestCase
         $email->from('system@example.com', 'The Webmaster');
         $email->subject('Test email');
         $email->body('This is the body');
+        $email->body('<strong>This is the body</strong>', 'text/html');
 
         $this->email = $email;
 

@@ -110,7 +110,7 @@ class EmailTemplate extends Email implements Interfaces\TemplateInterface
     {
         $this->parsedTemplate = $parsedTemplate;
 
-        return $this->body($this->parsedTemplate);
+        return $this->body($this->parsedTemplate, 'text/html');
     }
 
     /**

@@ -12,12 +12,6 @@ class EmailTemplateTest extends PHPUnit_Framework_TestCase
         $this->emailTemplate = new Message\EmailTemplate($this->path);
     }
 
-    public function testConstructor()
-    {
-        $this->assertEquals($this->path, $this->emailTemplate->getTemplatePath());
-        $this->assertEquals('text/html', $this->emailTemplate->contentType());
-    }
-
     public function testDefaultTemplatePath()
     {
         $emailTemplate = new Message\EmailTemplate();
@@ -66,7 +60,7 @@ class EmailTemplateTest extends PHPUnit_Framework_TestCase
     {
         $this->emailTemplate->load('test');
         $this->emailTemplate->prepare(new Prepare\VsprintfPrepare(), ['Developer']);
-        $this->assertEquals('Hi Developer, how are you?', $this->emailTemplate->body());
+        $this->assertEquals(['text/html' => 'Hi Developer, how are you?'], $this->emailTemplate->body());
         $this->assertEquals('Hi Developer, how are you?', $this->emailTemplate->getParsedTemplate());
     }
 
@@ -74,7 +68,7 @@ class EmailTemplateTest extends PHPUnit_Framework_TestCase
     {
         $this->emailTemplate->load('test.mustache');
         $this->emailTemplate->prepare(new Prepare\MustachePrepare(), ['name' => 'Developer']);
-        $this->assertEquals('<strong>Hi Developer</strong>', $this->emailTemplate->body());
+        $this->assertEquals(['text/html' => '<strong>Hi Developer</strong>'], $this->emailTemplate->body());
         $this->assertEquals('<strong>Hi Developer</strong>', $this->emailTemplate->getParsedTemplate());
     }
 }
