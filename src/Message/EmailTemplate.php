@@ -10,7 +10,7 @@ class EmailTemplate extends Email implements Interfaces\TemplateInterface
      * Where do the templates live?
      * @var string
      */
-    private $templatePath = __DIR__ . '/../../templates';
+    private $templatePath;
 
     /**
      * Holds the current email template, unparsed
@@ -35,11 +35,15 @@ class EmailTemplate extends Email implements Interfaces\TemplateInterface
      * directory where all templates are located.
      *
      * @param string $templatePath
+     *  If null, the `/templates` directory will be used in the root of this
+     *  component.
      */
     public function __construct($templatePath = null)
     {
         if (!is_null($templatePath)) {
             $this->setTemplatePath($templatePath);
+        } else {
+            $this->setTemplatePath(__DIR__ . '/../../templates');
         }
     }
 
