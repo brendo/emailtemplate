@@ -1,5 +1,7 @@
 # Email Template v0.2.0
 
+[![Build Status](https://travis-ci.org/brendo/emailtemplate.svg?branch=master)](https://travis-ci.org/brendo/emailtemplate)
+
 This component facilitates for the sending of emails using Swiftmailer.
 
 ## Usage
