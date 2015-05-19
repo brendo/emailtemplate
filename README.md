@@ -1,4 +1,4 @@
-# Email Template v0.2.1
+# Email Template v0.2.2
 
 [![Build Status](https://travis-ci.org/brendo/emailtemplate.svg?branch=master)](https://travis-ci.org/brendo/emailtemplate)
 
