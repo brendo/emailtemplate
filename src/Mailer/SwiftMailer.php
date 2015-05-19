@@ -132,8 +132,9 @@ class SwiftMailer implements MailerInterface
         }
 
         // Handle attachments
-        if (!$message->attachment()) {
-            foreach ($message->attachment() as $attachment) {
+        $attachments = $message->attachment();
+        if (!empty($attachments)) {
+            foreach ($attachments as $attachment) {
                 $this->createSwiftAttachment($swiftMessage, $attachment);
             }
         }
