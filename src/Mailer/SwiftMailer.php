@@ -22,6 +22,12 @@ class SwiftMailer implements MailerInterface
     private $settings;
 
     /**
+     * Holds the actual Swift mailer instance
+     * @var Swift_Mailer
+     */
+    private static $mailer = null;
+
+    /**
      * {@inheritdoc}
      */
     public function setConfiguration(array $settings)
@@ -74,14 +80,18 @@ class SwiftMailer implements MailerInterface
             throw new \RuntimeException('No configuration has been provided for SwiftMailer');
         }
 
-        $transport = Swift_SmtpTransport::newInstance()
-            ->setHost($this->settings['host'])
-            ->setPort($this->settings['port'])
-            ->setEncryption('ssl')
-            ->setUsername($this->settings['username'])
-            ->setPassword($this->settings['password']);
+        if (!isset(self::$mailer)) {
+            $transport = Swift_SmtpTransport::newInstance()
+                ->setHost($this->settings['host'])
+                ->setPort($this->settings['port'])
+                ->setEncryption('ssl')
+                ->setUsername($this->settings['username'])
+                ->setPassword($this->settings['password']);
 
-        return Swift_Mailer::newInstance($transport);
+            self::$mailer = Swift_Mailer::newInstance($transport);
+        }
+
+        return self::$mailer;
     }
 
     /**
